@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>搜尋結果</title>
+    <style>
+        body {
+            background-color: azure;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #c71585;
+            text-align: center;
+            margin-top: 50px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .result {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .item {
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            margin: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .item img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .item h2 {
+            color: #333;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .item p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .item:nth-child(odd) {
+            background-color: #ffd700;
+        }
+
+        .item:nth-child(even) {
+            background-color: #ff69b4;
+        }
+
+        .item:nth-child(3n) {
+            background-color: #87ceeb;
+        }
+    </style>
+</head>
+<body>
+    <h1>搜尋結果</h1>
+
+    <div id="car-results-container" class="result"></div>
+
+    <script>
+        // 獲取參數值
+        function getParameterByName(name) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(location.search);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // 獲取選擇的品牌、排氣量和風格
+        var selectedBrand = getParameterByName('brand');
+        var selectedCC = getParameterByName('cc');
+        var selectedStyle = getParameterByName('style');
+
+        // 車款數據
+        var cars = [
+            { brand: 'Adiva', cc: '150.1cc~250cc', style: '速可達', name: '2020 Adiva AD1 200 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/7da66022f1dbda677e9ea5a2cc890aa5.jpeg' },
+            { brand: 'Adiva', cc: '150.1cc~250cc', style: '速可達', name: '2020 Adiva AD1 200 Roll Lock ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/7da66022f1dbda677e9ea5a2cc890aa5.jpeg' },
+            { brand: 'Aeonmotor', cc: '100.1cc~150cc', style: '速可達', name: '2023 Aeonmotor CO-IN 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/298521976c990d2400d40554b7595f66.jpeg' },
+            { brand: 'Aeonmotor', cc: '100.1cc~150cc', style: '速可達', name: '2023 Aeonmotor Gather 125 CBS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/0125d002bb96218b72ce770fd323f5bb.jpeg' },
+            { brand: 'Aeonmotor', cc: '100.1cc~150cc', style: '速可達', name: '2023 Aeonmotor Dory 125 FI ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2020/07affc9af5e58215b20663b46b56e9d0.jpeg' },
+            { brand: 'Aeonmotor', cc: '100.1cc~150cc', style: '速可達', name: '2023 Aeonmotor Dory 125 FI碟煞版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/59f72c1fdffac1ea8f825eb16738fdeb.jpeg' },
+            { brand: 'Aeonmotor', cc: '150.1cc~250cc', style: '街車', name: '2023 Aeonmotor MY 150 FI Retro ABS標準版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2020/d6cf3535f2d498323fbdd5aef6124978.jpeg' },
+            { brand: 'Aeonmotor', cc: '150.1cc~250cc', style: '街車', name: '2023 Aeonmotor MY 150 FI Retro ABS特仕版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2020/775a03d40370130dfaedfc43deca0e83.jpeg' },
+            { brand: 'Aeonmotor', cc: '150.1cc~250cc', style: '街車', name: '2023 Aeonmotor MY 150 FI標準版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/e02d8b5fc9e54a6b5fa464904886434a.jpeg' },
+            { brand: 'Aeonmotor', cc: '150.1cc~250cc', style: '街車', name: '2023 Aeonmotor MY 150 FI特仕版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/1237647fc835b011267e59351eeebd2a.jpeg' },
+            { brand: 'Aeonmotor', cc: '250.1cc~550cc', style: '大羊', name: '2023 Aeonmotor STR 300 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/18a411309feaa9ab76c1caa6de3d318b.jpeg' },
+            { brand: 'Aeonmotor', cc: '電動', style: '速可達', name: '2023 Aeonmotor Ai-4 Ever', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2021/3bb1c3f646257a943c1616d4fb8c548a.jpeg' },
+            { brand: 'Aeonmotor', cc: '電動', style: '速可達', name: '2023 Aeonmotor Ai-2 Gather＋', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/October2021/c5f0f2afebac278994b896a5e7395835.jpeg' },
+            { brand: 'Aeonmotor', cc: '電動', style: '速可達', name: '2023 Aeonmotor Ai-1 Ultra Belt ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/August2022/8a49006b2d19cad615a156dff183f5ee.jpeg' },
+            { brand: 'Aeonmotor', cc: '電動', style: '速可達', name: '2023 Aeonmotor Ai-1 Sport＋', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2022/589addb6cf68b5dba45daf38e23d7ace.jpeg' },
+            { brand: 'Aeonmotor', cc: '電動', style: '速可達', name: '2023 Aeonmotor Ai-3 More', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2022/0c0f0c9cd35e094a8dfd182443f6fdb7.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia RSV4 1100 Factory ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/37b1c6fa268ed0d4dc6e00fe1b5e02b7.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia RSV4 1100 Factory SE ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/42460c99fcbe92fbd678d8fb1e0d6efc.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia RSV4 1100 STD ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/2f3d845ac4e8a58b896f0f2b6e506367.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia RS 660 Extrema ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/465f97e286a577ac0ae04540f4c0eee9.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia RS 660 Extrema ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/465f97e286a577ac0ae04540f4c0eee9.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia Tuono 660 Factory ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/1bbdc5bff8a856c073736fcf6bcaccc2.jpeg' },
+            { brand: 'Aprilia', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Aprilia Tuono V4 1100 STD ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/022de5566b4385a0588fc172e9e6db60.jpeg' },
+            { brand: 'Benelli', cc: '150.1cc~250cc', style: '街車', name: '2022 Benelli Leoncino 250 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/223ad3bc43c505ae2793c762b16eaceb.jpeg' },
+            { brand: 'Benelli', cc: '250.1cc~550cc', style: '街車', name: '2022 Benelli 502 C ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/03e43b6c58238abde844442ff1935fd0.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW S Series 1000 R ABS M版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/63882180658f4fdeaa46d464bec2e19f.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW S Series 1000 R ABS 標準版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/fefb4b02aa4980c5b63cc5b21af155da.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 BMW S Series 1000 RR ABS M版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/1cb75a036858d4b4c0dfb4baa742f111.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 BMW S Series 1000 RR ABS標準版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/4cc1168e4efe9ff40a0f7261b3944b75.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 BMW S Series 1000 RR ABS豪華版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/14fda9899f23fa989f8786dafee30ea4.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW S Series 1000 XR ABS M版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/a36cd4d685fff4f2f8a2cdba90fee046.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW S Series 1000 XR ABS標準版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/fb8e5b2e6e15fec3622cf8c46054db8e.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 GS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/e5e3aa193d2faea288ef50c8a32f0f7c.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 GS ABS Rallye', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/5f475bf67d19a0385ef6dc55fff06a75.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 GS ABS Trophy', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/7ee264949aa2937f891c6ea02807e568.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 GS ADV ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/d90525dde35ce3e2e7deb9f3a8966cb6.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 GS ADV ABS Rallye', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/2f9af4180a5cbc8f291ee7675da5441f.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 GS ADV ABS Trophy', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/cd852b20ad527125ce0a0b52620dfa5a.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW R Series 1250 RS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/5accc5fb2bf3cdf1211c8afe0a6f425e.jpeg' },
+            { brand: 'BMW', cc: '250.1cc~550cc', style: 'ADV多功能車', name: '2023 BMW G Series 310 GS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/87a9e7b2b7d587d4810c5da2e8ecbf95.jpeg' },
+            { brand: 'BMW', cc: '250.1cc~550cc', style: '街車', name: '2023 BMW G Series 310 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/82ff5b4a2b2dd9834ac37cf513bc50c7.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW F Series 750 GS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/70403f96cc208bd341d60c3697bc12d1.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 BMW F Series 750 GS ABS Keyless版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/b1130e51def62d5d191524dbaa8ddd27.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW F Series 900 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/25af382443bed7e3fc0be3e18dcb8167.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW R Series nineT 719 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/98e020729de1fa0fedd1da240a7d55c5.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW R Series nineT ABS 100周年紀念版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/6f36e66efbf22afbb25550f74215b477.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW R Series nineT ABS標準版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/320b8812073fe80c6853a192af0ee676.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW R Series nineT ABS賽車版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/a36b31375b5bec71afa23dd85b537955.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW R Series nineT Pure ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/68168ee6447e4d192fe70151d8b2eadf.jpeg' },
+            { brand: 'BMW', cc: '550.1cc以上', style: '街車', name: '2023 BMW R Series nineT Scrambler ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/be0331ab770783a4b7c4d97535533c9b.jpeg' },
+            { brand: 'Can-Am', cc: '550.1cc以上', style: '休旅車', name: '2023 Can-Am Ryker 600 Ace ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2021/e3b103a666774e2269f0bab29e347397.jpeg' },
+            { brand: 'Can-Am', cc: '550.1cc以上', style: '休旅車', name: '2023 Can-Am Spyder F3 S Special Series ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/aa206919d9feaf3907e7a6c13001c0a8.jpeg' },
+            { brand: 'Can-Am', cc: '550.1cc以上', style: '休旅車', name: '2023 Can-Am Spyder RT Limited ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2022/35d07b837b4d3eb0cdfa74d59827d529.jpeg' },
+            { brand: 'Can-Am', cc: '550.1cc以上', style: '休旅車', name: '2023 Can-Am Spyder RT Sea to Sky ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/801db9b66a71f6cab669615101249763.jpeg' },
+            { brand: 'CFMOTO', cc: '250.1cc~550cc', style: '跑車/旅跑車/仿賽車', name: '2023 CFMOTO SR 450 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/1ccb7cf47de5dd5803707e9cea6dc081.jpeg' },
+            { brand: 'CFMOTO', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 CFMOTO MT 800 N39 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/567ecad06c68072b5d99ba585d68af8e.jpeg' },
+            { brand: 'CPI', cc: '150.1cc~250cc', style: '越野車/滑胎車', name: '2020 CPI SM 250 Fi', image:'https://autos.yahoo.com.tw/y/r/w1200/iw/MMT/bike/d702bf5f49c4261f01af16ace757cb97_1200.jpg' },
+            { brand: 'CPI', cc: '250.1cc~550cc', style: '越野車/滑胎車', name: '2020 CPI SM 260 Fi', image:'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/June2018/51251b4774b2dbd6a5615f3d2a7b9853.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Ducati SuperSport 950 S ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2022/c970a6af24569601a0556a7040a2608c.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Ducati Panigale V2 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2020/13fd71010445cb87adf8f9687894cb99.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Ducati Panigale V2 Bayliss ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2021/f3b6923c9248d6f44991e3136c9aa657.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '街車', name: '2023 Ducati Monster 937 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2021/36b99d5dc7dca7ee1f0b0f88726ee83e.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '街車', name: '2023 Ducati Monster 937 SP ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/930dd7314188900a14671230a784c9f0.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '街車', name: '2023 Ducati Streetfighter V2 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/c1128b190e41fbfe51abbbd47d3102cc.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Ducati Desert X 950 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/October2022/024c60f2536f7bb0a944677951e90dac.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Ducati Multistrada V2 S ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/161461831fee000e60820ff82ac48021.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '越野車/滑胎車', name: '2023 Ducati Hypermotard 950 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2019/1847a166e52beabfa7068bf1e6a4fc25.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '越野車/滑胎車', name: '2023 Ducati Hypermotard 950 RVE ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2021/01dd7b30856f3f3b74b0018231de905e.jpeg' },
+            { brand: 'Ducati', cc: '550.1cc以上', style: '越野車/滑胎車', name: '2023 Ducati Hypermotard 950 SP ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2021/39a12c1943d7e42a37ced4e093908064.jpeg' },
+            { brand: 'eMOVING', cc: '電動', style: '速可達', name: '2023 eMOVING EZ 1', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/2622504b59872f2986304bacdcffca11.jpeg' },
+            { brand: 'eMOVING', cc: '電動', style: '速可達', name: '2023 eMOVING 勁炫 125旗艦科技款', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/428bfdca5c6242b8e02db6c8e0e04098.jpeg' },
+            { brand: 'Energica', cc: '電動重機', style: '跑車/旅跑車/仿賽車', name: '2023 eMOVING 勁炫 125旗艦科技款', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/October2021/ccb31d7ef67e5970b9d6d325863cfdce.jpeg' },
+            { brand: 'Energica', cc: '電動重機', style: '街車', name: '2022 Energica EVA EsseEsse 9＋ ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/October2021/946ecd932dabc7c7dd913ce3202e1925.jpeg' },
+            { brand: 'Energica', cc: '電動重機', style: '街車', name: '2022 Energica EVA Ribelle RS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/October2021/9b426131501d28aede87c5d3b49f6418.jpeg' },
+            { brand: 'eReady', cc: '電動', style: '速可達', name: '2023 eReady Run 魔綠幻紫版CBS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/2b02fec2dffd42e744468a5dc8512f77.jpeg' },
+            { brand: 'eReady', cc: '電動', style: '速可達', name: '2023 eReady Fun CBS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/August2020/43881eef8ec4adc1e76cd0af9556721e.jpeg' },
+            { brand: 'Gilera', cc: '250.1cc~550cc', style: '大羊', name: '2018 Gilera Fuoco 500ie', image: 'https://autos.yahoo.com.tw/y/r/w1200/iw/MMT/bike/d47d6bf385a6f4b375e69a1b7ae26292_1200.jpg' },
+            { brand: 'Gogoro', cc: '電動', style: '速可達', name: '2023 Gogoro SuperSport TCS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/ffc3e30705ea9a24bad77f651558fecb.jpeg' },
+            { brand: 'Gogoro', cc: '電動', style: '速可達', name: '2023 Gogoro Viva XL Superfast', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/June2022/08f13fb946de1de48fc63abbabf6d9d9.jpeg' },
+            { brand: 'Gogoro', cc: '電動', style: '速可達', name: '2023 Gogoro Delight 本色黑', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/f810bbc9337343f18dcc6f4061c8e498.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: '休旅車', name: '2023 Harley-Davidson Touring Ultra Limited Anniversary ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/176f477539af1b31625abfda7d69e492.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: '休旅車', name: '2023 Harley-Davidson Touring Street Glide ST ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/4f8e9cf0960d05c16d1ce426a79a5802.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: '美式', name: '2023 Harley-Davidson Softail Street Bob ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/8c5e6cd5a6726d9524e9a46ab2021996.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: '美式', name: '2023 Harley-Davidson Softail Standard ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/eb54f036871c249c12a8d80baa840630.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: '休旅車', name: '2023 Harley-Davidson Touring Road Glide Special Anniversary ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/00d8aacd8d1f0be201a2fa21ca4a13e0.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: '美式', name: '2023 Harley-Davidson Nightster ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/306fe0a3062434b3216114d5e1178a37.jpeg' },
+            { brand: 'Harley-Davidson', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Harley-Davidson Pan America 1250 Special ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/613f3ced343e1d38b736ac9b3e66d231.jpeg' },
+            { brand: 'Hartford', cc: '100.1cc~150cc', style: '街車', name: '2023 Hartford HS 150 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2021/086dff0add4da0ee2f067405acf6de80.jpeg' },
+            { brand: 'Hartford', cc: '150.1cc~250cc', style: '街車', name: '2023 Hartford 雲豹 223 H3 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2021/035a6e137fe0444fb04a291070f145f3.jpeg' },
+            { brand: 'Hartford', cc: '100.1cc~150cc', style: '街車', name: '2023 Hartford Mini Plus 150 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2022/84cb4379fa9551990fabdc49b5a7c214.jpeg' },
+            { brand: 'Honda', cc: '100.1cc~150cc', style: '街車', name: '2023 Honda Monkey 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/c24fa9ed9c01a58bb3fe1c0994b7ccc5.jpeg' },
+            { brand: 'Honda', cc: '100.1cc~150cc', style: '街車', name: '2023 Honda Super Cub C125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/a4c4f2edd158d96c8dbfc80bdcd8c7e5.jpeg' },
+            { brand: 'Honda', cc: '100.1cc~150cc', style: '街車', name: '2023 Honda MSX Grom 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/5722344e8ffd4d169ad6a4c269f89f37.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Honda Africa Twin 1100 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/54d729e1b333ab69c5a707e420f32be8.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '休旅車', name: '2023 Honda NT 1100 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/33015f7b6692975047f2e7e60d37f4c4.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '美式', name: '2023 Honda Rebel 1100 DCT ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2023/301d097dc2d4fce5a013c3503813d77e.png' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '休旅車', name: '2023 Honda Goldwing 1800 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/05e522020933110784f59d1edc61c779.png' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '休旅車', name: '2023 Honda Goldwing Tour 1800 Airbag DCT ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2021/d614865cbe8de7d89de3c91c4a001a9b.jpeg' },
+            { brand: 'Honda', cc: '250.1cc~550cc', style: 'ADV多功能車', name: '2023 Honda ADV 350 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/9dfbe52f21ec0ec9485cb91bc11a9e95.jpeg' },
+            { brand: 'Honda', cc: '250.1cc~550cc', style: '大羊', name: '2023 Honda ADV 350 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2023/2a91113c5a1e10610e21b0e594b4c544.png' },
+            { brand: 'Honda', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Honda X-ADV 750 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2022/6d6f9febb465f31372c5c42a9ef9061c.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '街車', name: '2023 Honda NC 750X ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2022/ae2233c655dce472214024d9f6386c4c.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '街車', name: '2023 Honda CB650 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/79379055cef525c3fd5221f2820bef4d.jpeg' },
+            { brand: 'Honda', cc: '250.1cc~550cc', style: '跑車/旅跑車/仿賽車', name: '2023 Honda CBR500 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2023/f7c827ad91af1172ac1d118b1db58f6a.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Honda CBR650 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/356bc1254e49f68606d72f1e5fdeb998.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '街車', name: '2023 Honda CB1000 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/ed1c2b24bc1a1e0cde1021b4acca34ed.jpeg' },
+            { brand: 'Honda', cc: '250.1cc~550cc', style: '街車', name: '2023 Honda CB300 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/d6559706763730f47c3684ed245c13ad.jpeg' },
+            { brand: 'Honda', cc: '550.1cc以上', style: '街車', name: '2023 Honda CB1000 R＋ ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/7a4281ed792b4f69e70852ebb0d33f84.jpeg' },
+            { brand: 'Honda', cc: '250.1cc~550cc', style: '越野車/滑胎車', name: '2023 Honda CRF300 Rally ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2020/04c88957319777c0b91f8f58ce398d0f.jpeg' },
+            { brand: 'Honda', cc: '250.1cc~550cc', style: '越野車/滑胎車', name: '2023 Honda CRF300 L ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/e4862c04d9914bf2126519bd7e64071e.png' },
+            { brand: 'Husqvarna', cc: '150.1cc~250cc', style: '街車', name: '2023 Husqvarna Svartpilen 250 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/054787f9820d3e0e2f84f9ca76999f77.jpeg' },
+            { brand: 'Husqvarna', cc: '250.1cc~550cc', style: '街車', name: '2023 Husqvarna Vitpilen 401 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/471633bf0d700fe75ba068632b66574b.jpeg' },
+            { brand: 'Husqvarna', cc: '250.1cc~550cc', style: '街車', name: '2023 Husqvarna Svartpilen 401 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/a39c2a5681338e8f74a077d103481cf8.jpeg' },
+            { brand: 'Husqvarna', cc: '250.1cc~550cc', style: '越野車/滑胎車', name: '2023 Husqvarna FE 350', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/6b445c641b985fca57a4ebdb0ec1283f.jpeg' },
+            { brand: 'Husqvarna', cc: '250.1cc~550cc', style: '越野車/滑胎車', name: '2023 Husqvarna FE 350 Heritage', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/7ea8f8429a3d8c52b79f0af33297ea37.jpeg' },
+            { brand: 'Husqvarna', cc: '550.1cc以上', style: '越野車/滑胎車', name: '2023 Husqvarna Supermoto 701 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/4639052f978a5cb65cf4e15d2579a67e.jpeg' },
+            { brand: 'Indian', cc: '550.1cc以上', style: '街車', name: '2022 Indian FTR 1200 S ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2021/67199b69d377d03052281d41f2cd5ae2.png' },
+            { brand: 'Indian', cc: '550.1cc以上', style: '美式', name: '2022 Indian Scout 1200 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/36e85d3b15eaaa7ba33743fee91b880c.jpeg' },
+            { brand: 'Indian', cc: '550.1cc以上', style: '休旅車', name: '2022 Indian Challenger Dark Horse 1800 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2020/2ba4c3ffb167740f44a1aa5daf802495.jpeg' },
+            { brand: 'Indian', cc: '550.1cc以上', style: '休旅車', name: '2022 Indian Chieftain Dark Horse 1900 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/04c0b720e6b28cf175df740aa11a561b.jpeg' },
+            { brand: 'Indian', cc: '550.1cc以上', style: '休旅車', name: '2022 Indian Roadmaster Limited 1900 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/b9461a2e167a3166a9c82f24f886c765.jpeg' },
+            { brand: 'Indian', cc: '550.1cc以上', style: '美式', name: '2022 Indian Scout Bobber Twenty 1200 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/23ad6a7be719ba07e281142c7875d44c.jpeg' },
+            { brand: 'Italjet', cc: '150.1cc~250cc', style: '速可達', name: '2023 Italjet Dragster 200 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/bb1c6a7f6c5e23639c9a41efb437bd65.jpeg' },
+            { brand: 'Kawasaki', cc: '250.1cc~550cc', style: '跑車/旅跑車/仿賽車', name: '2023 Kawasaki Ninja 400 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2022/eedafcdf04143dcf774b26617073ec3c.jpeg' },
+            { brand: 'Kawasaki', cc: '250.1cc~550cc', style: '街車', name: '2023 Kawasaki Z 400 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/3ad472b7bcee0059600ae89b4778e183.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '街車', name: '2023 Kawasaki Z 650 RS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/4a67e31ee59fbf4f9ed33b08518fe7b2.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '街車', name: '2023 Kawasaki W 800 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/58a31a6dc63a669420d067e604c00686.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '街車', name: '2023 Kawasaki W 800 Cafe ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/ae9a592e1ea4af9b874e59c4f231232a.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '街車', name: '2023 Kawasaki Z 900 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2022/6f4feaac0659ea922f94ab624581674e.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '街車', name: '2023 Kawasaki Z 900 RS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2022/1e70aadfc37d6935a2c2876fa09f746b.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '街車', name: '2023 Kawasaki Z H2 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/edf95eb91fdf5381d9142a8b84aa478c.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Kawasaki Ninja 1000 SX ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/477cb07207d5e3b329aa2b3f23b20400.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Kawasaki Ninja ZX-10R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/a1fec02004a37edfac7b7517e93b5fca.jpeg' },
+            { brand: 'Kawasaki', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2022 Kawasaki Ninja ZX-6R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/0f8c0ba3a1bbde3a083554f2a1c43a12.jpeg' },
+            { brand: 'KTM', cc: '550.1cc以上', style: '街車', name: '2023 KTM Duke 1290 Super R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/54339ac197e3fd8c8e680c5e3f8a7d67.jpeg' },
+            { brand: 'KTM', cc: '550.1cc以上', style: '街車', name: '2023 KTM Duke 890 R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/cb2544178a1ad19d60ffdb23743fc7c7.jpeg' },
+            { brand: 'KTM', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 KTM 1290 Super Adventure R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/028cc45a84c60aef059236e8092680f4.jpeg' },
+            { brand: 'KTM', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 KTM 1290 Super Adventure S ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/489fc46d60dd74f854fa00174c13c1c4.jpeg' },
+            { brand: 'KTM', cc: '150.1cc~250cc', style: '街車', name: '2023 KTM Duke 250 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/0b47331cff7b85093f0e26ec8473da57.png' },
+            { brand: 'KTM', cc: '150.1cc~250cc', style: 'ADV多功能車', name: '2023 KTM 250 Adventure ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/7aee40b04812c161360e0d9011ec33d3.jpeg' },
+            { brand: 'KTM', cc: '250.1cc~550cc', style: '跑車/旅跑車/仿賽車', name: '2022 KTM RC 390 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/f808703155d9dcb4f90950e2a01f4a23.jpeg' },
+            { brand: 'KTM', cc: '250.1cc~550cc', style: '街車', name: '2022 KTM Duke 390 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/e3a003f83fb7307caa78450d7819296c.jpeg' },
+            { brand: 'KTM', cc: '550.1cc以上', style: '越野車/滑胎車', name: '2022 KTM 690 SMC R ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/705977e91364b4f9780403361ff0aab8.jpeg' },
+            { brand: 'Kymco', cc: '100.1cc~150cc', style: '速可達', name: '2023 Kymco Many 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/90ee36fb55bf0fb8ee4f90862275b202.jpeg' },
+            { brand: 'Kymco', cc: '100.1cc~150cc', style: '速可達', name: '2023 Kymco Like 125 ABS版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/dd6ead9bece7058628b39a0fc62dc59c.png' },
+            { brand: 'Kymco', cc: '100.1cc~150cc', style: '速可達', name: '2023 Kymco VJR 125 TCS版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/a23aacfd2e18faf018461b9f43e2782c.jpeg' },
+            { brand: 'Kymco', cc: '100.1cc~150cc', style: '速可達', name: '2023 Kymco GP 125 VCS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2021/ca4d3c3b8bc281d4e50bfc796cbe1698.jpeg' },
+            { brand: 'Kymco', cc: '1100.1cc~150cc', style: '速可達', name: '2023 Kymco Racing S 125', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2022/2025b4e29c43b57a96dd0898c5b01972.jpeg' },
+            { brand: 'Kymco', cc: '100.1cc~150cc', style: '速可達', name: '2023 Kymco RacingMan 150 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/06d9748fcb50ddacbfea5ea634e1741e.jpeg' },
+            { brand: 'Kymco', cc: '150.1cc~250cc', style: '速可達', name: '2023 Kymco KRV MOTO 180 TCS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2022/ed002b04648c2107a42960d88eb0471c.jpeg' },
+            { brand: 'Kymco', cc: '250.1cc~550cc', style: '大羊', name: '2023 Kymco DT X 360 TCS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2021/ff1d65015bc7cb809c4b020a471564bf.jpeg' },
+            { brand: 'Kymco', cc: '250.1cc~550cc', style: '大羊', name: '2023 Kymco G-Dink CT TCS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/961d2a76d8ffce9248c298ddc091aace.jpeg' },
+            { brand: 'Kymco', cc: '550.1cc以上', style: '大羊', name: '2023 Kymco AK 550 Premium ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/August2022/0ab3678610063eb701ee5e17afa66ae2.jpeg' },
+            { brand: 'Moto Guzzi', cc: '550.1cc以上', style: '街車', name: '2019 Moto Guzzi V85 TT ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/065ed3091e2304dc2a998e35ebe0116c.jpeg' },
+            { brand: 'Moto Guzzi', cc: '550.1cc以上', style: '街車', name: '2017 Moto Guzzi V7 III 50th Anniversario ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/June2018/c033ebc5819895eed219a08b8a1395ce.jpeg' },
+            { brand: 'Moto Guzzi', cc: '550.1cc以上', style: '街車', name: '2017 Moto Guzzi V7 III Racer ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/June2018/88e3fec9eb3fd5ab20961a8bb2523f8c.jpeg' },
+            { brand: 'MV Agusta', cc: '550.1cc以上', style: '街車', name: '2020 MV Agusta Rush 1000 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/b4160aac1570a8f7aada214f9175ad8d.jpeg' },
+            { brand: 'MV Agusta', cc: '550.1cc以上', style: '街車', name: '2020 MV Agusta Brutale 1000 RR ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/fadc136f9d1460fb272ea8389e89bfc9.jpeg' },
+            { brand: 'MV Agusta', cc: '550.1cc以上', style: '街車', name: '2020 MV Agusta Dragster 800 RR SCS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/4e1c72b353878415b85df35a0ef5c226.jpeg' },
+            { brand: 'MV Agusta', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2020 MV Agusta SuperVeloce 800 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2020/526bae8c012a1e6025cf35248cb979a5.jpeg' },
+            { brand: 'MV Agusta', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 MV Agusta F3RR', image: 'https://moto7.net/imgs/F3-RR-MY22_AMBIENT-RACING-42.jpg' },
+            { brand: 'PGO', cc: '100.1cc~150cc', style: '速可達', name: '2023 PGO J-BuBu 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/755d7de9c98ec18709642e1009452b73.jpeg' },
+            { brand: 'PGO', cc: '100.1cc~150cc', style: '速可達', name: '2023 PGO Spring 125 ABS無線鑰匙版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2022/72d37a6f6a796f29a7b7cc35c5ffaedb.jpeg' },
+            { brand: 'PGO', cc: '150.1cc~250cc', style: '速可達', name: '2023 PGO TIG 170 ABS旗艦版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/890a6e190c1e65491e21f9b9c6262903.jpeg' },
+            { brand: 'PGO', cc: '100.1cc~150cc', style: '速可達', name: '2023 PGO BON 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/370e11b5cf44b96ce3e434503b63938b.jpeg' },
+            { brand: 'PGO', cc: '100.1cc~150cc', style: '速可達', name: '2023 PGO Alpha MAX 125越野版CBS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2021/c775c165c552c2a026201627ce88e3c7.jpeg' },
+            { brand: 'PGO', cc: '250.1cc~550cc', style: '大羊', name: '2023 PGO Tigra 250 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/4af9d89f8ed48e1fa1b9fc9e4053728b.jpeg' },
+            { brand: 'Suzuki', cc: '100.1cc~150cc', style: '速可達', name: '2023 Suzuki Saluto 125', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2022/c833283eba3f122beebcc89e862dd3ae.jpeg' },
+            { brand: 'Suzuki', cc: '100.1cc~150cc', style: '速可達', name: '2023 Suzuki Swish 125', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2022/48c173a95c791881a77666b01fc74e57.jpeg' },
+            { brand: 'Suzuki', cc: '150.1cc~250cc', style: '跑車/旅跑車/仿賽車', name: '2023 Suzuki Gixxer SF 250 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/June2021/725860b814f784d3e8c1d26d54a79891.jpeg' },
+            { brand: 'Suzuki', cc: '150.1cc~250cc', style: '街車', name: '2021 Suzuki GSX S150 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2020/b194eb3feeb0c8a7711df2558bff3ebb.jpeg' },
+            { brand: 'Suzuki', cc: '150.1cc~250cc', style: '跑車/旅跑車/仿賽車', name: '2021 Suzuki GSX R150 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/June2020/6dcffa41be95fc72675c962fa11ee6b4.jpeg' },
+            { brand: 'Suzuki', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Suzuki V-Strom 1050 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/35eeaa8a773b7db8bc9bb72a945b9924.jpeg' },
+            { brand: 'Suzuki', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Suzuki V-Strom 650 XT ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/f06d1752e07e5a8732dbd8f62466947d.jpeg' },
+            { brand: 'Suzuki', cc: '550.1cc以上', style: '街車', name: '2023 Suzuki GSX 8S ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/b73b3715c90b8ca4ed7a9851bee0cc26.jpeg' },
+            { brand: 'Suzuki', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Suzuki Hayabusa 1300 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2022/65ad13bc272aed147c0a2040cad4d3c5.jpeg' },
+            { brand: 'Suzuki', cc: '250.1cc~550cc', style: '大羊', name: '2023 Suzuki Burgman 400 TCS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2022/65f337a34909b2c9a3678f6aaef010e2.jpeg' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM 4MICA 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/November2021/c003f47b28c91ee9c213805270a4923a.jpeg' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM Fiddle 125 ABS Keyless', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/1966c531376122a36701b29ae0171459.jpeg' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM Z1 Attila 125雙碟ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2021/8fd3d3d1858bef5528fe66f189a57826.jpeg' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM 迪爵Duke 125鼓煞CBS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2023/4805e957c8e8adc9818b8fe352c9d2b4.jpeg' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM KRN BT 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/5c9724852667ee6b1b552dcac0313583.jpeg' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM Jet SL 125 TCS致競版', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/20d5615338c9c0948027505efbd8fb7c.png' },
+            { brand: 'SYM', cc: '100.1cc~150cc', style: '速可達', name: '2023 SYM Jet SR 125 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2020/45a0c3e11660751d5ae4eb12d90efcf5.jpeg' },
+            { brand: 'SYM', cc: '150.1cc~250cc', style: '速可達', name: '2023 SYM DRG BT 158 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/8563c8af338765a15ebcabfe255107ed.png' },
+            { brand: 'SYM', cc: '150.1cc~250cc', style: '速可達', name: '2023 SYM MMBCU 158 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/August2022/b3956bb905d1d1f7a14349a90a6f73d3.jpeg' },
+            { brand: 'SYM', cc: '150.1cc~250cc', style: '街車', name: '2023 SYM 野狼 傳奇125 EFi', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2022/9114da777504652daef6f419583bc459.png' },
+            { brand: 'SYM', cc: '250.1cc~550c', style: '大羊', name: '2023 SYM Maxsym TL ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2022/da1a6127cc67775730ac786fd21b0fcb.jpeg' },
+            { brand: 'Triumph', cc: '550.1cc以上', style: '美式', name: '2023 Triumph Rocket 3 GT ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/67b3ed8168c636ddcf01080c6f25cc0a.jpeg' },
+            { brand: 'Triumph', cc: '550.1cc以上', style: '街車', name: '2023 Triumph Trident 660 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/c49f96aa710b06cfea7521e36fc86930.jpeg' },
+            { brand: 'Triumph', cc: '550.1cc以上', style: '街車', name: '2023 Triumph Thruxton RS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/d2cdc2d111e4e703aa7620e49246fa0f.jpeg' },
+            { brand: 'Triumph', cc: '550.1cc以上', style: '街車', name: '2023 Triumph Street Triple RS ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/d97fa3a382d6969ff91b2511af8a80b9.jpeg' },
+            { brand: 'Triumph', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Triumph Tiger 1200 GT Explorer ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/July2022/d13fd63951874f6d4d176772156f6b3b.jpeg' },
+            { brand: 'Vespa', cc: '250.1cc~550cc', style: '速可達', name: '2023 Vespa GTS 300 Super Sport hpe ABS EU5', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2023/96bfb598840e1bb8d8cff312b336f786.jpeg' },
+            { brand: 'Vespa', cc: '150.1cc~250cc', style: '速可達', name: '2023 Vespa Sprint S 150 TFT i-Get ABS EU5', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/September2021/bf91c2c07e29a4e27f1dba15f52500ee.jpeg' },
+            { brand: 'Vespa', cc: '150.1cc~250cc', style: '速可達', name: '2023 Vespa Sprint 150 i-Get ABS EU5', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/May2022/8717a93edeb332b91c20dc7f292afc87.png' },
+            { brand: 'Victory', cc: '550.1cc以上', style: '速可達', name: '2016 Victory Vision 1800', image: 'https://autos.yahoo.com.tw/y/r/w1200/iw/MMT/bike/5fe7fee085d0107eca1526dbf4fcf852_1200.jpg' },
+            { brand: 'Victory', cc: '550.1cc以上', style: '休旅車', name: '2016 Victory Vision 1800', image: 'https://autos.yahoo.com.tw/y/r/w1200/iw/MMT/bike/5fe7fee085d0107eca1526dbf4fcf852_1200.jpg' },
+            { brand: 'Victory', cc: '550.1cc以上', style: '休旅車', name: '2016 Victory Cross Country 1800', image: 'https://autos.yahoo.com.tw/y/r/w1200/iw/MMT/bike/da93e60177dc6e66faff689c416bbde1_1200.jpg' },
+            { brand: 'Victory', cc: '550.1cc以上', style: '美式', name: '2016 Victory Hammer S 1800', image: 'https://autos.yahoo.com.tw/y/r/w1200/iw/MMT/bike/cacdf8d9e4e8b48f1cd643ae1d41fb11_1200.jpg' },
+            { brand: 'Yamaha', cc: '100.1cc~150cc', style: '速可達', name: '2023 Yamaha Cygnus Gryphus 125 FI ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/d7eb6c8545db047780e9d5c82a10c1eb.jpeg' },
+            { brand: 'Yamaha', cc: '150.1cc~250cc', style: '速可達', name: '2023 Yamaha Force 2.0 155 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2023/5879a2ef34f8bf7d7f6b670cea19f0db.jpeg' },
+            { brand: 'Yamaha', cc: '150.1cc~250cc', style: '速可達', name: '2023 Yamaha Augur 155 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/March2023/a34e315b3dd3cec3871ab9bc9a618e37.jpeg' },
+            { brand: 'Yamaha', cc: '150.1cc~250cc', style: '速可達', name: '2023 Yamaha NMAX 155 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2023/287be6aff904debc82c905fdd97b7624.png' },
+            { brand: 'Yamaha', cc: '250.1cc~550cc', style: '跑車/旅跑車/仿賽車', name: '2023 Yamaha YZF-R 3 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/0ebc57f98825657210e7473ffbf8314a.jpeg' },
+            { brand: 'Yamaha', cc: '550.1cc以上', style: '跑車/旅跑車/仿賽車', name: '2023 Yamaha YZF-R 7 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2023/1a1330ce834be891f3aa0042d779cc4f.jpeg' },
+            { brand: 'Yamaha', cc: '550.1cc以上', style: '街車', name: '2023 Yamaha MT 09 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2022/b5f228c2b87d31a154f9a91371b11172.jpeg' },
+            { brand: 'Yamaha', cc: '550.1cc以上', style: '街車', name: '2023 Yamaha MT 07 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/April2023/4d744269ecfd3e381a5cb1532acb4c93.png' },
+            { brand: 'Yamaha', cc: '550.1cc以上', style: '街車', name: '2023 Yamaha XSR 700 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/December2021/412345d7f0f290803acaac2eff92ca4b.jpeg' },
+            { brand: 'Yamaha', cc: '550.1cc以上', style: '大羊', name: '2023 Yamaha TMAX 560 Tech MAX ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2023/d1b818b0b7539805bf65e5c1aacd3c12.jpeg' },
+            { brand: 'Yamaha', cc: '250.1cc~550cc', style: '大羊', name: '2023 Yamaha XMAX 300 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/February2023/130f47f470b7a89447464b45c73a8281.jpeg' },
+            { brand: 'Yamaha', cc: '550.1cc以上', style: 'ADV多功能車', name: '2023 Yamaha Tenere 700 ABS', image: 'https://autos.yahoo.com.tw/p/r/w1200/bike-trim/January2023/ed821f39391b8da0856cece8da95e0a3.jpeg' },
+            // 其他車款...
+        ];
+
+        // 根據選擇的款式篩選車款
+        var filteredCars = cars.filter(function(car) {
+            return car.brand === selectedBrand && car.cc === selectedCC && car.style === selectedStyle;
+        });
+
+        // 生成車款列表
+        var carResultsContainer = document.getElementById('car-results-container');
+        filteredCars.forEach(function(car) {
+            var carItem = document.createElement('div');
+            carItem.classList.add('item');
+
+            var carImage = document.createElement('img');
+            carImage.src = car.image;
+            carImage.alt = car.name;
+            carImage.addEventListener('click', function() {
+                // 點擊圖片時的處理
+                window.location.href = 'car_details.html?name=' + encodeURIComponent(car.name);
+            });
+
+            var carName = document.createElement('h2');
+            carName.textContent = car.name;
+
+            var carInfo = document.createElement('p');
+            //carInfo.textContent = car.brand + ' ' + car.cc + ' ' + car.style;
+
+            carItem.appendChild(carImage);
+            carItem.appendChild(carName);
+            carItem.appendChild(carInfo);
+
+            carResultsContainer.appendChild(carItem);
+        });
+    </script>
+</body>
+</html>

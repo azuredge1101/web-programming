@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+	<meta charset="UTF-8">
+	<title>機車選購</title>
+	<style>
+        body {
+            background-image: url("https://mcn-images.bauersecure.com/wp-images/4705/2023_bmw_s1000rr_01.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position:top;
+            height: 100%;
+            width: 100%;
+            }
+		h1 {
+			text-align: center;
+			font-size: 40px;
+			color: #333;
+			margin-top: 50px;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+
+		label {
+			font-size: 24px;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		select {
+			font-size: 20px;
+			padding: 10px;
+			margin-bottom: 20px;
+			border-radius: 10px;
+		}
+
+		button {
+			font-size: 24px;
+			padding: 10px 20px;
+			border-radius: 10px;
+			background-color: #333;
+			color: #fff;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #666;
+		}
+
+		.result {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin-top: 50px;
+		}
+
+		.item {
+			width: 300px;
+			margin: 20px;
+			border-radius: 10px;
+			box-shadow: 5px 5px 10px #ccc;
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		.item img {
+			width: 100%;
+			height: 200px;
+			object-fit: cover;
+		}
+
+		.item h2 {
+			font-size: 24px;
+			color: #333;
+			margin: 10px;
+		}
+
+		.item p {
+			font-size: 16px;
+			color: #666;
+			margin: 10px;
+			height: 80px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	</style>
+</head>
+<body>
+    
+	<h1>機車選購</h1>
+	<form action="search.html" method="GET">
+		<label for="brand">品牌：</label>
+		<select name="brand" id="brand">
+			<option value="Adiva">Adiva 亞帝發</option>
+            <option value="Aeonmotor">Aeonmotor 宏佳騰</option>
+			<option value="Aprilia">Aprilia</option>
+			<option value="Benelli">Benelli 倍力尼</option>
+			<option value="BMW">BMW</option>
+			<option value="Can-Am">Can-Am</option>
+			<option value="CFMOTO">CFMOTO 春風動力</option>
+			<option value="CPI">CPI</option>
+			<option value="Ducati">Ducati 杜卡迪</option>
+			<option value="eMOVING">eMOVING</option>
+			<option value="Energica">Energica</option>
+			<option value="eReady">eReady</option>
+			<option value="Gilera">Gilera</option>
+			<option value="Gogoro">Gogoro</option>
+			<option value="Harley-Davidson">Harley-Davidson 哈雷</option>
+			<option value="Hartford">Hartford 哈特佛</option>
+			<option value="Honda">Honda 本田</option>
+			<option value="Husqvarna">Husqvarna</option>
+			<option value="Indian">Indian 印地安</option>
+			<option value="Italjet">Italjet</option>
+			<option value="Kawasaki">Kawasaki 川崎</option>
+			<option value="KTM">KTM</option>
+			<option value="Kymco">Kymco 光陽</option>
+			<option value="MV Agusta">MV Agusta</option>
+			<option value="PGO">PGO</option>
+			<option value="Suzuki">Suzuki 鈴木</option>
+			<option value="SYM">SYM 三陽</option>
+			<option value="Triumph">Triumph 凱旋</option>
+			<option value="Vespa">Vespa</option>
+			<option value="Victory">Victory 勝利</option>
+			<option value="Yamaha">Yamaha 山葉</option>
+		</select>
+		<label for="cc">排氣量：</label>
+		<select name="cc" id="cc">
+            <option value="電動">電動車</option>
+            <option value="電動重機">電動重機</option>
+			<option value="50cc以下">50cc以下</option>
+			<option value="50.1cc~100cc">50.1cc~100cc</option>
+			<option value="100.1cc~150cc">100.1cc~150cc</option>
+			<option value="150.1cc~250cc">150.1cc-250cc</option>
+            <option value="250.1cc~550cc">250.1cc-550cc</option>
+            <option value="550.1cc以上">550.1cc以上</option>
+        </select>
+        <label for="style">風格：</label>
+        <select name="style" id="style">
+            <option value="速可達">速可達</option>
+            <option value="街車">街車</option>
+            <option value="跑車/旅跑車/仿賽車">跑車/旅跑車/仿賽車</option>
+            <option value="休旅車">休旅車</option>
+            <option value="大羊">大羊</option>
+            <option value="越野車/滑胎車">越野車/滑胎車</option>
+            <option value="ADV多功能車">ADV多功能車</option>
+            <option value="美式">美式</option>
+            <option value="速可達">速可達</option>
+        </select>
+        <button type="submit">搜尋</button>
+        </form>
+
+</body>
+</html>
